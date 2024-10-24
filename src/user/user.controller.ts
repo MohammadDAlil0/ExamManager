@@ -27,7 +27,6 @@ export class UserController {
   @Roles(Role.MANAGER, Role.TEACHER)
   @Get()
   getAllUsers(@GetUser() user) {
-    console.log
     return this.userService.getAllUsers();
   }
 

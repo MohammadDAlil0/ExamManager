@@ -20,6 +20,7 @@ export class JWTStrategy extends PassportStrategy(Strategy, 'jwt') {
         sub: number,
         email: string
     }) {
+        console.log('Inside JwtValidator')
         const user: User = await this.prisma.user.findUnique({
             where: {
                 id: payload.sub
