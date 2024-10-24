@@ -18,14 +18,14 @@ export class RolesGuard implements CanActivate {
     }
     const request = context.switchToHttp().getRequest();
 
-    if (!request.userId) {
+    if (!request.user) {
       throw new UnauthorizedException('User Id not found');
     }
-
+    
     const user = request.user;
-    console.log('Inside RoleGuard', user);
-    return requiredRoles.some((role) => {
-        return false;
-    });
+    if(!requiredRoles.includes(user.role)) {
+      throw new UnauthorizedException(`You must be ${requiredRoles}`);
+    }
+    return true;
   }
 }

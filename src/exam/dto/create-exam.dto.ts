@@ -1,4 +1,4 @@
-import { IsDate, IsDateString, IsDefined, IsInt, IsNotEmpty, IsString } from "class-validator";
+import { IsDateString, IsDefined, IsInt, IsNotEmpty, IsPositive, IsString } from "class-validator";
 
 export class CreateExamDto {
     @IsDefined()
@@ -7,6 +7,7 @@ export class CreateExamDto {
     name: string;
 
     @IsInt()
+    @IsPositive()
     duration: number;
 
     @IsDateString()

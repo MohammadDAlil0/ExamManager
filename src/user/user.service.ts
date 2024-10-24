@@ -77,16 +77,39 @@ export class UserService {
   }
 
   async changeRole(userId: number, dto: ChangeRoleDto) {
-    const user: User = await this.prisma.user.update({
-      where: {
-        id: userId
-      },
-      data: {
-        role: dto.role
+    try{
+      const user: User = await this.prisma.user.update({
+        where: {
+          id: userId
+        },
+        data: {
+          role: dto.role
+        }
+      });
+      delete user.hash;
+      return user;
+    }
+    catch(err) {
+      if (err instanceof PrismaClientKnownRequestError) {
+        if (err.code === 'P2025') {
+          throw new NotFoundException('User not found');
+         }
+     }
+     throw err;
+    }
+  }
+
+  async deleteUser(userId: number) {
+    try {
+      const user: User = await this.prisma.user.delete({
+        where: { id: userId },
+      });
+    } catch (error) {
+      if (error.code === 'P2025') { 
+        throw new NotFoundException('Invalid user ID');
       }
-    });
-    delete user.hash;
-    return user;
+      throw error;
+    }
   }
 
 }
