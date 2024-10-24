@@ -6,6 +6,8 @@ import { ChangeRoleDto } from './dto/changeRole.dto';
 import { JwtGuard } from './guard/jwt.guard';
 import { Roles } from './decorator/role.decorator';
 import { Role } from '@prisma/client';
+import { RolesGuard } from './guard/roles.guard';
+import { GetUser } from './decorator/get-user.decorator';
 
 @Controller('user')
 export class UserController {
@@ -21,10 +23,11 @@ export class UserController {
     return this.userService.login(dto); 
   }
 
-  @UseGuards(JwtGuard)
+  @UseGuards(JwtGuard, RolesGuard)
   @Roles(Role.MANAGER, Role.TEACHER)
   @Get()
-  getAllUsers() {
+  getAllUsers(@GetUser() user) {
+    console.log
     return this.userService.getAllUsers();
   }
 
