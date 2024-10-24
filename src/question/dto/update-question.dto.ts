@@ -4,10 +4,8 @@ import { IsAnswerValid } from "../../validators/answer.validator";
 export class UpdateQuestionDto {
     @IsArray()
     @IsString({ each: true })
-    @IsOptional()
-    options?: string[];
+    options: string[];
 
     @IsAnswerValid()
-    @IsOptional()
-    answer?: number;
+    answer: number;
 }

@@ -17,7 +17,19 @@ export class ExamService {
     }
 
     async getAllExams() {
-        const exams = await this.prisma.exam.findMany();
+        const exams = await this.prisma.exam.findMany({
+            include: {
+                questions: true,
+                students: {
+                    select: {
+                        id: true,
+                        username: true,
+                        email: true,
+                        role: true,
+                    },
+                }
+            }
+        });
         return exams;
     }
 
@@ -49,9 +61,10 @@ export class ExamService {
                 where: {
                     id: examId
                 }
-            })
+            });
         }
         catch(err) {
+            console.log(err, 'hioashdas');
             if (err instanceof PrismaClientKnownRequestError) {
                 if (err.code === 'P2025') {
                    throw new NotFoundException('Exam not found');

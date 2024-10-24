@@ -8,6 +8,7 @@ import { Roles } from './decorator/role.decorator';
 import { Role } from '@prisma/client';
 import { RolesGuard } from './guard/roles.guard';
 import { GetUser } from './decorator/get-user.decorator';
+import { AddUserExamDto } from './dto/add-user-exam.dto';
 
 @Controller('user')
 export class UserController {
@@ -31,15 +32,22 @@ export class UserController {
   }
 
   @UseGuards(JwtGuard, RolesGuard)
+  @Roles(Role.TEACHER)
+  @Post('addUserExam')
+  addUserExam(@Body() dto: AddUserExamDto) {
+    return this.userService.addUserExam(dto);
+  }
+
+  @UseGuards(JwtGuard, RolesGuard)
   @Roles(Role.MANAGER)
-  @Put('changeRole/:userId')
-  changeRole(@Param('userId', ParseIntPipe) userId: number, @Body() dto: ChangeRoleDto) {
+  @Put('changeRole/:id')
+  changeRole(@Param('id', ParseIntPipe) userId: number, @Body() dto: ChangeRoleDto) {
     return this.userService.changeRole(userId, dto);
   }
 
-  @HttpCode(HttpStatus.NO_CONTENT)
   @Roles(Role.MANAGER)
-  @Delete('id')
+  @HttpCode(HttpStatus.NO_CONTENT)
+  @Delete(':id')
   deleteUser(@Param('id', ParseIntPipe) userId: number) {
     return this.userService.deleteUser(userId);
   }

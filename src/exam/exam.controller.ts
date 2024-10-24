@@ -17,6 +17,7 @@ export class ExamController {
         return this.examService.createExam(dto);
     }
 
+    @Roles()
     @Get()
     getAllExams() {
         return this.examService.getAllExams();
@@ -28,7 +29,7 @@ export class ExamController {
     }
 
     @HttpCode(HttpStatus.NO_CONTENT)
-    @Delete('id')
+    @Delete(':id')
     deleteExam(@Param('id', ParseIntPipe) examId: number) {
         return this.examService.deleteExam(examId);
     }

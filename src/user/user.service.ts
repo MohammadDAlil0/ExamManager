@@ -9,6 +9,7 @@ import { ConfigService } from '@nestjs/config';
 import { ChangeRoleDto } from './dto/changeRole.dto';
 import { User } from '@prisma/client';
 import { IUser } from './entities/user.entity';
+import { AddUserExamDto } from './dto/add-user-exam.dto';
 
 @Injectable({})
 export class UserService {
@@ -72,8 +73,45 @@ export class UserService {
   }
 
   async getAllUsers(): Promise<IUser[]> {
-    const users = await this.prisma.user.findMany();
+    const users = await this.prisma.user.findMany({
+      include: {
+        exams: true
+      }
+    });
     return users.map(({ hash, ...user }) => user);
+  }
+
+  async addUserExam(dto: AddUserExamDto): Promise<string> {
+    const { userId, examId } = dto;
+
+    try {
+        const user = await this.prisma.user.findUnique({
+            where: { id: userId },
+        });
+        if (!user) {
+            throw new NotFoundException('User not found');
+        }
+
+        const exam = await this.prisma.exam.findUnique({
+            where: { id: examId },
+        });
+        if (!exam) {
+            throw new NotFoundException('Exam not found');
+        }
+
+        await this.prisma.user.update({
+            where: { id: userId },
+            data: {
+                exams: {
+                    connect: { id: examId }, // Connect the exam to the user
+                },
+            },
+        });
+
+        return 'User successfully registered for the exam';
+    } catch (error) {
+        throw error;
+    }
   }
 
   async changeRole(userId: number, dto: ChangeRoleDto) {

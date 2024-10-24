@@ -38,7 +38,7 @@ model Question {
   id Int @default(autoincrement()) @id
   options String[]
   answer Int 
-  exam Exam @relation(fields: [examId], references: [id])
+  exam Exam @relation(fields: [examId], references: [id], onDelete: Cascade)
   examId Int 
 }
 
