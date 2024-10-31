@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, HttpCode, HttpStatus, Param, ParseIntPipe, Patch, Post, UseGuards } from '@nestjs/common';
+import { Body, Controller, Delete, FileTypeValidator, Get, HttpCode, HttpStatus, MaxFileSizeValidator, Param, ParseFilePipe, ParseIntPipe, Patch, Post, UploadedFile, UseGuards, UseInterceptors } from '@nestjs/common';
 import { CreateExamDto } from './dto/create-exam.dto';
 import { ExamService } from './exam.service';
 import { JwtGuard } from 'src/user/guard/jwt.guard';
@@ -6,6 +6,8 @@ import { RolesGuard } from 'src/user/guard/roles.guard';
 import { Roles } from 'src/user/decorator/role.decorator';
 import { Role } from '@prisma/client';
 import { UpdateExamDto } from './dto/update-exam.dto';
+import { FileInterceptor } from '@nestjs/platform-express';
+import { uploadOldExamDto } from './dto/upload-old-exam.dto';
 
 @UseGuards(JwtGuard, RolesGuard)
 @Roles(Role.TEACHER, Role.MANAGER)
@@ -33,5 +35,21 @@ export class ExamController {
     deleteExam(@Param('id', ParseIntPipe) examId: number) {
         return this.examService.deleteExam(examId);
     }
-    
+
+    @Post('uploadOld')
+    @Roles()
+    @UseInterceptors(FileInterceptor('file'))
+    uploadOldFile(
+        @Body() dto: uploadOldExamDto, 
+        @UploadedFile(
+            new ParseFilePipe({
+                validators: [
+                    new MaxFileSizeValidator({ maxSize: 30000000 }),
+                    new FileTypeValidator({ fileType: 'application/pdf' }),
+                ],
+            })
+        ) 
+        file: Express.Multer.File) {
+        return this.examService.uploadOldExam(dto, file);
+    }
 }

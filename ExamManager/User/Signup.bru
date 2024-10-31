@@ -1,0 +1,28 @@
+meta {
+  name: Signup
+  type: http
+  seq: 1
+}
+
+post {
+  url: {{URL}}user/signup
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+    "username": "u7",
+    "email": "user7@test.com",
+    "password": "123",
+    "confirmPassword": "123"
+  }
+}
+
+vars:post-response {
+  JWT: res.accessToken
+}
+
+tests {
+  console.log(res)
+}

@@ -1,0 +1,21 @@
+meta {
+  name: Upload Old Exam
+  type: http
+  seq: 1
+}
+
+post {
+  url: {{URL}}exam/uploadOld
+  body: multipartForm
+  auth: none
+}
+
+headers {
+  Authorization: Bearer {{JWT}}
+}
+
+body:multipart-form {
+  name: Exam 2022
+  date: 2022-01-01
+  file: @file(C:\Users\Mohammad Saeed Dalil\Downloads\Telegram Desktop\Guide_F24.pdf)
+}

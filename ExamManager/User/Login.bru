@@ -1,0 +1,22 @@
+meta {
+  name: Login
+  type: http
+  seq: 2
+}
+
+post {
+  url: {{URL}}user/login
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+    "email": "user7@test.com",
+    "password": "123" 
+  }
+}
+
+vars:post-response {
+  JWT: res.body.accessToken
+}

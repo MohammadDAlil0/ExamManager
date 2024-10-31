@@ -3,6 +3,7 @@ import { PrismaService } from 'src/prisma/prisma.service';
 import { CreateExamDto } from './dto/create-exam.dto';
 import { UpdateExamDto } from './dto/update-exam.dto';
 import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
+import { uploadOldExamDto } from './dto/upload-old-exam.dto';
 
 @Injectable()
 export class ExamService {
@@ -70,6 +71,20 @@ export class ExamService {
                    throw new NotFoundException('Exam not found');
                 }
             }
+            throw err;
+        }
+    }
+
+    async uploadOldExam(dto: uploadOldExamDto, file: Express.Multer.File) {
+        try {
+            return await this.prisma.oldExam.create({
+                data: {
+                    ...dto,
+                    path: file.filename
+                }
+            });
+        }
+        catch(err) {
             throw err;
         }
     }
