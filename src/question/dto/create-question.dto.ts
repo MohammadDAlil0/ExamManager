@@ -1,5 +1,5 @@
 import { IsArray, IsDefined, IsInt, IsString } from "class-validator";
-import { IsAnswerValid } from "../../validators/answer.validator";
+import { IsAnswerValid } from "../../core/validators/answer.validator";
 
 export class CreateQuestionDto {
     @IsArray()

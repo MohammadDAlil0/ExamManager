@@ -9,14 +9,10 @@ import {
     BelongsTo,
 } from 'sequelize-typescript';
 import { Exam } from 'src/exam/exam.entity';
+import { BaseModel } from 'src/core/common-classes/base.model';
   
 @Table
-export class Question extends Model {
-    @PrimaryKey
-    @AutoIncrement
-    @Column
-    id: number;
-  
+export class Question extends BaseModel {  
     @Column(DataType.ARRAY(DataType.STRING))  // Array of strings for options
     options: string[];
   

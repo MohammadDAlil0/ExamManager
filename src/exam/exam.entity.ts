@@ -1,3 +1,4 @@
+import { CreationOptional } from 'sequelize';
 import {
     Table,
     Column,
@@ -10,19 +11,15 @@ import {
     CreatedAt,
     UpdatedAt,
 } from 'sequelize-typescript';
+import { BaseModel } from 'src/core/common-classes/base.model';
 import { Question } from 'src/question/question.entity';
 import { ExamQuestion } from 'src/relationships/exam-question.entity';
-import { ExamStudent } from 'src/relationships/exam-student.entity';
+import { ExamStudent } from 'src/exam-student/exam-student.entity';
 import { User } from 'src/user/user.entity';
 
 @Table
-export class Exam extends Model {
-    @PrimaryKey
-    @AutoIncrement
-    @Column
-    id: number;
-  
-    @Column
+export class Exam extends BaseModel {
+    @Column(DataType.STRING(36))
     name: string;
   
     @Column(DataType.INTEGER)
@@ -36,14 +33,5 @@ export class Exam extends Model {
   
     @BelongsToMany(() => Question, () => ExamQuestion)
     questions: Question[];
-  
-    @CreatedAt
-    @Default(DataType.NOW)
-    @Column
-    createdAt: Date;
-  
-    @UpdatedAt
-    @Column
-    updatedAt: Date;
 }
   

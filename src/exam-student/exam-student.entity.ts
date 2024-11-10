@@ -6,9 +6,9 @@ import { User } from 'src/user/user.entity';
 export class ExamStudent extends Model {
   @ForeignKey(() => Exam)
   @Column
-  examId: number;
+  examId: string;
 
   @ForeignKey(() => User)
   @Column
-  userId: number;
+  userId: string;
 }

@@ -5,6 +5,8 @@ import { ConfigModule } from '@nestjs/config';
 import { ExamModule } from './exam/exam.module';
 import { QuestionModule } from './question/question.module';
 import { DatabaseModule } from './database/database.module';
+import { ExamSudentModule } from './exam-sudent/exam-sudent.module';
+import { ExamStudentModule } from './exam-student/exam-student.module';
 
 @Module({
   imports: [
@@ -15,7 +17,7 @@ import { DatabaseModule } from './database/database.module';
     PrismaModule, 
     ExamModule,
     QuestionModule, 
-    DatabaseModule
+    DatabaseModule, ExamSudentModule, ExamStudentModule
   ]
 })
 export class AppModule {}

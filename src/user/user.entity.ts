@@ -9,6 +9,7 @@ import {
     HasMany,
 } from 'sequelize-typescript';
 import { Exam } from 'src/exam/exam.entity';
+import { BaseModel } from 'src/core/common-classes/base.model';
 
 enum Role {
 STUDENT = 'STUDENT',
@@ -17,12 +18,7 @@ ADMIN = 'ADMIN',
 }
   
 @Table
-export class User extends Model {
-    @PrimaryKey
-    @AutoIncrement
-    @Column
-    id: number;
-  
+export class User extends BaseModel {  
     @Unique
     @Column
     username: string;
