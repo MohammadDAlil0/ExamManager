@@ -1,68 +1,54 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
-import { PrismaService } from 'src/prisma/prisma.service';
+import { Inject, Injectable, NotFoundException } from '@nestjs/common';
 import { CreateQuestionDto } from './dto/create-question.dto';
 import { UpdateQuestionDto } from './dto/update-question.dto';
-import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
+import { QUESTION_REPOSITORY } from 'src/core/constants/constants';
+import { Question } from './question.entity';
 
 @Injectable()
 export class QuestionService {
-    constructor(private prisma: PrismaService) {}
+    constructor(
+        @Inject(QUESTION_REPOSITORY) private questionRepository: typeof Question
+    ) {}
     
     async createQuestion(dto: CreateQuestionDto) {
-        const isExamExist = await this.prisma.exam.findUnique({
-            where: {
-                id: dto.examId
-            }     
-        });
-        if (!isExamExist) {
-            throw new NotFoundException('Exam not found!');
-        }
-        return await this.prisma.question.create({
+        return await this.questionRepository.create({
             data: dto
         });
     }
 
 
     async getAllQuestions() {
-        const questions = await this.prisma.question.findMany();
+        const questions = await this.questionRepository.findAll();
         return questions;
     }
 
     async updateQuestion(questionId:number, dto: UpdateQuestionDto) {
         try {
-            const question = await this.prisma.question.update({
-                where: {
-                    id: questionId
-                },
-                data: {
-                    ...dto
+            const question = await this.questionRepository.update(
+                {
+                    dto
+                }, {
+                    where: {id: questionId}
                 }
-            });
+            );
             return question;
         }
         catch(err) {
-            if (err instanceof PrismaClientKnownRequestError) {
-                if (err.code === 'P2025') {
-                   throw new NotFoundException('question not found');
-                 }
-            }
+            console.log(err);
+            throw err;
         }
     }
 
     async deleteQuestion(questionId: number) {
         try {
-            return await this.prisma.question.delete({
+            return await this.questionRepository.destroy({
                 where: {
                     id: questionId
                 }
-            })
+            });
         }
         catch(err) {
-            if (err instanceof PrismaClientKnownRequestError) {
-                if (err.code === 'P2025') {
-                   throw new NotFoundException('Question not found');
-                }
-            }
+            console.log(err);
             throw err;
         }
     }

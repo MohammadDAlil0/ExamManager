@@ -1,36 +1,29 @@
-import { ForbiddenException, Inject, Injectable, NotFoundException } from '@nestjs/common';
+import { Inject, Injectable, NotFoundException } from '@nestjs/common';
 import { SignupDto } from './dto/Signup.dto';
 import * as argon from 'argon2';
 import { LoginDto } from './dto/login.dto';
 import { JwtService } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
 import { ChangeRoleDto } from './dto/changeRole.dto';
-import { AddUserExamDto } from './dto/add-user-exam.dto';
-import { EXAMSTUDENT_REPOSITORY, USER_REPOSITORY } from 'src/core/constants/constants';
+import { USER_REPOSITORY } from 'src/core/constants/constants';
 import { User } from './user.entity';
 import { Exam } from 'src/exam/exam.entity';
-import { ExamStudent } from 'src/exam-student/exam-student.entity';
 
 @Injectable({})
 export class UserService {
   constructor(
     @Inject(USER_REPOSITORY) private userRepository: typeof User, 
-    @Inject(EXAMSTUDENT_REPOSITORY) private examStudentRepository: typeof ExamStudent, 
-    private jwt: JwtService, private config: ConfigService) {}
+    private jwt: JwtService, private config: ConfigService
+  ) {}
 
   async signup(dto: SignupDto) {
-    try {
-      const hash = await argon.hash(dto.password);
-      const user = await this.userRepository.create<User>({
-        username: dto.username,
-        email: dto.email,
-        hash
-      });
-      return this.signToken(user.id, user.email);
-    }
-    catch(err) {
-      console.log(err);
-    }
+    const hash = await argon.hash(dto.password);
+    const user = await this.userRepository.create<User>({
+      username: dto.username,
+      email: dto.email,
+      hash
+    });
+    return this.signToken(user.id, user.email);
   }
 
   async login(dto: LoginDto) {
@@ -74,47 +67,36 @@ export class UserService {
         model: Exam
       }
     });
-    return users.map(({ hash, ...user }) => user);
-  }
-
-  async changeRole(userId: number, dto: ChangeRoleDto) {
-    try{
-      // to do
-
-      // const user: User = await this.userRepository.update({
-      //   where: {
-      //     userId
-      //   }
-      //   set {
-      //     role: dto.role
-      //   }
-      // });
+    return users.map((obj) => {
+      const user = obj.toJSON();
       delete user.hash;
       return user;
-    }
-    catch(err) {
-      if (err instanceof userRepositoryClientKnownRequestError) {
-        if (err.code === 'P2025') {
-          throw new NotFoundException('User not found');
-         }
-     }
-     throw err;
-    }
+    })
   }
 
-  async deleteUser(userId: number) {
-    try {
-      const user: User = await this.userRepository.user.delete({
+  async changeRole(userId: string, dto: ChangeRoleDto) {
+    const [numberOfAffectedRows, affectedRows] = await User.update<User>(
+      { role: dto.role },
+      {
         where: { id: userId },
-      });
-    } catch (error) {
-      if (error.code === 'P2025') { 
-        throw new NotFoundException('Invalid user ID');
+        returning: true,
       }
-      throw error;
-    }
+    );
+
+    const user = affectedRows[0]; // Access the updated user if needed
+    delete user.hash;
+    return user;
   }
 
+  async deleteUser(userId: string) {
+    const deletedCount = await this.userRepository.destroy<User>({
+      where: { id: userId },
+    });
+
+    if (deletedCount === 0) {
+      throw new NotFoundException('Invalid user ID');
+    }
+  }
 }
 
 

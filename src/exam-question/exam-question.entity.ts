@@ -1,15 +1,14 @@
 import { Table, Column, Model, ForeignKey, DataType } from 'sequelize-typescript';
 import { BaseModel } from 'src/core/common-classes/base.model';
 import { Exam } from 'src/exam/exam.entity';
-import { User } from 'src/user/user.entity';
-
+import { Question } from 'src/question/question.entity';
 @Table
-export class ExamStudent extends BaseModel {
+export class ExamQuestion extends BaseModel {
   @ForeignKey(() => Exam)
   @Column({type: DataType.UUID })
   examId: string;
 
-  @ForeignKey(() => User)
+  @ForeignKey(() => Question)
   @Column({type: DataType.UUID })
-  userId: string;
+  questionId: string;
 }

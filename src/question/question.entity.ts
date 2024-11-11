@@ -20,7 +20,7 @@ export class Question extends BaseModel {
     answer: number;
   
     @ForeignKey(() => Exam)
-    @Column
+    @Column({ type: DataType.UUID })
     examId: number;
   
     @BelongsTo(() => Exam, { onDelete: 'CASCADE' })

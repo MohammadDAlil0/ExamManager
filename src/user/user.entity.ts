@@ -7,11 +7,13 @@ import {
     Unique,
     Default,
     HasMany,
+    BelongsToMany
 } from 'sequelize-typescript';
 import { Exam } from 'src/exam/exam.entity';
 import { BaseModel } from 'src/core/common-classes/base.model';
+import { ExamStudent } from 'src/exam-student/exam-student.entity';
 
-enum Role {
+export enum Role {
 STUDENT = 'STUDENT',
 TEACHER = 'TEACHER',
 ADMIN = 'ADMIN',
@@ -34,6 +36,6 @@ export class User extends BaseModel {
     @Column
     hash: string;
   
-    @HasMany(() => Exam)
+    @BelongsToMany(() => Exam, () => ExamStudent)
     exams: Exam[];
 }

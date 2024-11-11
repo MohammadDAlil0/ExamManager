@@ -4,7 +4,7 @@ import { Column, CreatedAt, DataType, Default, Model, PrimaryKey, UpdatedAt } fr
 export class BaseModel extends Model {
     @PrimaryKey
     @Default(DataType.UUIDV4)
-    @Column({type: DataType.UUIDV4})
+    @Column({type: DataType.UUID })
     id: CreationOptional<string>;
 
 

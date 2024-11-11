@@ -1,14 +1,14 @@
-import { Injectable } from "@nestjs/common";
+import { Inject, Injectable } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
 import { PassportStrategy } from "@nestjs/passport";
 import { ExtractJwt, Strategy } from "passport-jwt";
-import { PrismaService } from "../../prisma/prisma.service";
-import { User } from "@prisma/client";
+import { USER_REPOSITORY } from "src/core/constants/constants";
+import { User } from "../user.entity";
 
 
 @Injectable()
 export class JWTStrategy extends PassportStrategy(Strategy, 'jwt') {
-    constructor(config: ConfigService, private prisma: PrismaService) {
+    constructor(config: ConfigService, @Inject(USER_REPOSITORY) private userRepository: typeof User) {
         super({
             jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
             ignoreExpiration: false,
@@ -21,7 +21,7 @@ export class JWTStrategy extends PassportStrategy(Strategy, 'jwt') {
         email: string
     }) {
         console.log('Inside JwtValidator')
-        const user: User = await this.prisma.user.findUnique({
+        const user: User = await this.userRepository.findOne({
             where: {
                 id: payload.sub
             }

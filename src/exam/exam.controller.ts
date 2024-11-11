@@ -2,15 +2,11 @@ import { Body, Controller, Delete, FileTypeValidator, Get, HttpCode, HttpStatus,
 import { CreateExamDto } from './dto/create-exam.dto';
 import { ExamService } from './exam.service';
 import { JwtGuard } from 'src/user/guard/jwt.guard';
-import { RolesGuard } from 'src/user/guard/roles.guard';
-import { Roles } from 'src/user/decorator/role.decorator';
-import { Role } from '@prisma/client';
 import { UpdateExamDto } from './dto/update-exam.dto';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { uploadOldExamDto } from './dto/upload-old-exam.dto';
 
-@UseGuards(JwtGuard, RolesGuard)
-@Roles(Role.TEACHER, Role.MANAGER)
+@UseGuards(JwtGuard)
 @Controller('exam')
 export class ExamController {
     constructor(private readonly examService: ExamService) {}
@@ -19,7 +15,6 @@ export class ExamController {
         return this.examService.createExam(dto);
     }
 
-    @Roles()
     @Get()
     getAllExams() {
         return this.examService.getAllExams();
@@ -37,7 +32,6 @@ export class ExamController {
     }
 
     @Post('uploadOld')
-    @Roles()
     @UseInterceptors(FileInterceptor('file'))
     uploadOldFile(
         @Body() dto: uploadOldExamDto, 

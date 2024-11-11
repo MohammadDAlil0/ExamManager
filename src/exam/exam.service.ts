@@ -1,35 +1,34 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
-import { PrismaService } from 'src/prisma/prisma.service';
+import { Inject, Injectable, NotFoundException } from '@nestjs/common';
 import { CreateExamDto } from './dto/create-exam.dto';
 import { UpdateExamDto } from './dto/update-exam.dto';
-import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
 import { uploadOldExamDto } from './dto/upload-old-exam.dto';
+import { EXAM_REPOSITORY } from 'src/core/constants/constants';
+import { Exam } from './exam.entity';
+import { User } from 'src/user/user.entity';
 
 @Injectable()
 export class ExamService {
-    constructor(private prisma: PrismaService) {}
+    constructor(@Inject(EXAM_REPOSITORY) private examRepository: typeof Exam) {}
 
     async createExam(dto: CreateExamDto) {
         dto.date = new Date(dto.date);
-        const exam = await this.prisma.exam.create({
+        const exam = await this.examRepository.create<Exam>({
             data: dto
         });
         return exam;
     }
 
     async getAllExams() {
-        const exams = await this.prisma.exam.findMany({
-            include: {
-                questions: true,
-                students: {
-                    select: {
-                        id: true,
-                        username: true,
-                        email: true,
-                        role: true,
-                    },
+        const exams = await this.examRepository.findAll<Exam>({
+            include: [
+                {
+                    model: Exam
+                },
+                {
+                    model: User,
+                    attributes: ['id', 'username', 'email', 'role']
                 }
-            }
+            ]
         });
         return exams;
     }
@@ -37,56 +36,36 @@ export class ExamService {
     async updateExam(examId:number, dto: UpdateExamDto) {
         try {
             dto.date = new Date(dto.date);
-            const exam = await this.prisma.exam.update({
-                where: {
-                    id: examId
-                },
-                data: {
-                    ...dto
-                }
+            const exam = await this.examRepository.update<Exam>({
+                dto
+            }, {
+                where: {id: examId},
+                returning: true
             });
             return exam;
         }
         catch(err) {
-            if (err instanceof PrismaClientKnownRequestError) {
-                if (err.code === 'P2025') {
-                   throw new NotFoundException('Exam not found');
-                 }
-            }
+            console.log(err);
+            throw err;
         }
     }
 
     async deleteExam(examId: number) {
         try {
-            return await this.prisma.exam.delete({
+            return await this.examRepository.destroy<Exam>({
                 where: {
                     id: examId
                 }
             });
         }
         catch(err) {
-            console.log(err, 'hioashdas');
-            if (err instanceof PrismaClientKnownRequestError) {
-                if (err.code === 'P2025') {
-                   throw new NotFoundException('Exam not found');
-                }
-            }
+            console.log(err);
             throw err;
         }
     }
 
     async uploadOldExam(dto: uploadOldExamDto, file: Express.Multer.File) {
-        try {
-            return await this.prisma.oldExam.create({
-                data: {
-                    ...dto,
-                    path: file.filename
-                }
-            });
-        }
-        catch(err) {
-            throw err;
-        }
+        return 'TODO'
     }
 
 }
