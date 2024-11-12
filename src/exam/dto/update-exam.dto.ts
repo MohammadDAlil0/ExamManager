@@ -1,19 +1,4 @@
-import { Type } from "class-transformer";
-import { IsDate, IsDateString, IsDefined, IsInt, IsNotEmpty, IsOptional, IsPositive, IsString } from "class-validator";
+import { PartialType } from "@nestjs/swagger";
+import { CreateExamDto } from "./create-exam.dto";
 
-export class UpdateExamDto {
-    @IsDefined()
-    @IsString()
-    @IsNotEmpty()
-    @IsOptional()
-    name?: string;
-
-    @IsInt()
-    @IsPositive()
-    @IsOptional()
-    duration?: number;
-
-    @IsDate()
-    @Type(() => Date)
-    date?: Date;
-}
+export class UpdateExamDto extends PartialType(CreateExamDto) {}

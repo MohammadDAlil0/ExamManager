@@ -13,8 +13,4 @@ export class ExamStudentController {
     createExam(@Body() dto: ExamStudentDto) {
         return this.examStudentService.create(dto);
     }
-
-
-    
-
 }

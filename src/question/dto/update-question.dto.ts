@@ -1,11 +1,4 @@
-import { IsArray, IsDefined, IsInt, IsOptional, IsString } from "class-validator";
-import { IsAnswerValid } from "../../core/validators/answer.validator";
+import { OmitType } from "@nestjs/swagger";
+import { CreateQuestionDto } from "./create-question.dto";
 
-export class UpdateQuestionDto {
-    @IsArray()
-    @IsString({ each: true })
-    options: string[];
-
-    @IsAnswerValid()
-    answer: number;
-}
+export class UpdateQuestionDto extends OmitType(CreateQuestionDto, ['examId'] as const) {}
