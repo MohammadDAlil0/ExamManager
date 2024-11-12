@@ -21,7 +21,9 @@ async function bootstrap() {
   .setVersion('1.0')
   .build()
 
-  const documentFactory = () => SwaggerModule.createDocument(app, config);
+  const documentFactory = () => SwaggerModule.createDocument(app, config, {
+    autoTagControllers: true 
+  });
   SwaggerModule.setup('api', app, documentFactory);
 
 

@@ -14,7 +14,6 @@ export class QuestionService {
         const doc = await this.questionRepository.create({
             ...dto
         });
-        console.log(doc);
         return doc;
     }
 
