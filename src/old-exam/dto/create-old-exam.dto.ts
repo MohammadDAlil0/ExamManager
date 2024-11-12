@@ -1,7 +1,7 @@
 import { Type } from "class-transformer";
 import { IsDefined, IsISO8601, IsNotEmpty, IsString } from "class-validator";
 
-export class uploadOldExamDto {
+export class createOldExamDto {
     @IsDefined()
     @IsString()
     @IsNotEmpty()

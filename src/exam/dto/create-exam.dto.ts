@@ -1,4 +1,5 @@
-import { IsDateString, IsDefined, IsInt, IsNotEmpty, IsPositive, IsString } from "class-validator";
+import { Type } from "class-transformer";
+import { IsDate, IsDefined, IsInt, IsNotEmpty, IsPositive, IsString } from "class-validator";
 
 export class CreateExamDto {
     @IsDefined()
@@ -10,6 +11,7 @@ export class CreateExamDto {
     @IsPositive()
     duration: number;
 
-    @IsDateString()
+    @IsDate()
+    @Type(() => Date)
     date: Date;
 }

@@ -20,7 +20,6 @@ export class JWTStrategy extends PassportStrategy(Strategy, 'jwt') {
         sub: number,
         email: string
     }) {
-        console.log('Inside JwtValidator')
         const user: User = await this.userRepository.findOne({
             where: {
                 id: payload.sub

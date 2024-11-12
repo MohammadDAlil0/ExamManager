@@ -5,6 +5,8 @@ import { ExamModule } from './exam/exam.module';
 import { QuestionModule } from './question/question.module';
 import { DatabaseModule } from './core/database/database.module';
 import { ExamQuestionModule } from './exam-question/exam-question.module';
+import { OldExamModule } from './old-exam/old-exam.module';
+import { ExamStudentModule } from './exam-student/exam-student.module';
 
 @Module({
   imports: [
@@ -13,8 +15,11 @@ import { ExamQuestionModule } from './exam-question/exam-question.module';
     }), 
     UserModule, 
     ExamModule,
-    QuestionModule, 
-    DatabaseModule, ExamQuestionModule
+    QuestionModule,
+    ExamStudentModule,
+    DatabaseModule, 
+    ExamQuestionModule, 
+    OldExamModule
   ]
 })
 export class AppModule {}

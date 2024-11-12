@@ -56,7 +56,7 @@ export class UserController {
   @Roles(Role.ADMIN)
   @HttpCode(HttpStatus.NO_CONTENT)
   @Delete(':id')
-  deleteUser(@Param('id', ParseIntPipe) userId: string) {
+  deleteUser(@Param('id', ParseUUIDPipe) userId: string) {
     return this.userService.deleteUser(userId);
   }
 

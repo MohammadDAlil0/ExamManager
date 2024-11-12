@@ -1,4 +1,3 @@
-import { CreationOptional } from 'sequelize';
 import {
     Table,
     Column,
