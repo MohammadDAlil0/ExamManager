@@ -1,4 +1,4 @@
-import { IsArray, IsDefined, IsInt, IsString } from "class-validator";
+import { IsArray, IsDefined, IsString, IsUUID } from "class-validator";
 import { IsAnswerValid } from "../../core/validators/answer.validator";
 
 export class CreateQuestionDto {
@@ -9,7 +9,7 @@ export class CreateQuestionDto {
     @IsAnswerValid()
     answer: number;
 
-    @IsInt()
+    @IsUUID()
     @IsDefined()
-    examId: number;
+    examId: string;
 }

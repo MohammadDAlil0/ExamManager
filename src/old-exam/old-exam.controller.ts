@@ -1,6 +1,6 @@
 import { Controller, Get, Post, Body, Param, Delete, UseInterceptors, UploadedFile, ParseFilePipe, MaxFileSizeValidator, FileTypeValidator, UseGuards } from '@nestjs/common';
 import { OldExamService } from './old-exam.service';
-import { ApiBody, ApiConsumes, ApiOperation, ApiResponse } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiBody, ApiConsumes, ApiOperation, ApiResponse } from '@nestjs/swagger';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { createOldExamDto } from './dto/create-old-exam.dto';
 import { RolesGuard } from 'src/user/guard/roles.guard';
@@ -10,6 +10,7 @@ import { Role } from 'src/user/user.entity';
 
 @UseGuards(JwtGuard ,RolesGuard)
 @Roles(Role.ADMIN, Role.TEACHER)
+@ApiBearerAuth()
 @Controller('old-exam')
 export class OldExamController {
   constructor(private readonly oldExamService: OldExamService) {}
@@ -49,14 +50,14 @@ export class OldExamController {
   }
 
   @ApiOperation({ summary: 'Get All Old Exams' })
-  @ApiResponse({ status: 201, description: 'You will get all the old exams' })
+  @ApiResponse({ status: 200, description: 'You will get all the old exams' })
   @Get()
   findAll() {
     return this.oldExamService.findAllOldExams();
   }
 
   @ApiOperation({ summary: 'Delete Old Exam' })
-  @ApiResponse({ status: 201, description: 'You will not get anything' })
+  @ApiResponse({ status: 204, description: 'You will not get anything' })
   @Delete(':id')
   remove(@Param('id') examId: string) {
     return this.oldExamService.deleteoldExam(examId);

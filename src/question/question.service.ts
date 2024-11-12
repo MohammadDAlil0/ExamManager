@@ -11,9 +11,11 @@ export class QuestionService {
     ) {}
     
     async createQuestion(dto: CreateQuestionDto) {
-        return await this.questionRepository.create({
-            data: dto
+        const doc = await this.questionRepository.create({
+            ...dto
         });
+        console.log(doc);
+        return doc;
     }
 
 
@@ -22,34 +24,23 @@ export class QuestionService {
         return questions;
     }
 
-    async updateQuestion(questionId:number, dto: UpdateQuestionDto) {
-        try {
-            const question = await this.questionRepository.update(
-                {
-                    dto
-                }, {
-                    where: {id: questionId}
-                }
-            );
-            return question;
-        }
-        catch(err) {
-            console.log(err);
-            throw err;
-        }
+    async updateQuestion(questionId: string, dto: UpdateQuestionDto) {
+        const [numberOfAffectedRows, affectedRows] = await this.questionRepository.update(
+            {
+                ...dto
+            }, {
+                where: {id: questionId},
+                returning: true
+            }
+        );
+        return affectedRows[0];
     }
 
-    async deleteQuestion(questionId: number) {
-        try {
-            return await this.questionRepository.destroy({
-                where: {
-                    id: questionId
-                }
-            });
-        }
-        catch(err) {
-            console.log(err);
-            throw err;
-        }
+    async deleteQuestion(questionId: string) {
+        return await this.questionRepository.destroy({
+            where: {
+                id: questionId
+            }
+        });
     }
 }

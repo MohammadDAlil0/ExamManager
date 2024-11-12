@@ -19,7 +19,6 @@ async function bootstrap() {
   .setTitle('Exam Manager')
   .setDescription('The Exam Manager APIs')
   .setVersion('1.0')
-  .addTag('exams')
   .build()
 
   const documentFactory = () => SwaggerModule.createDocument(app, config);

@@ -13,4 +13,12 @@ export class ExamStudentService {
         });
         return doc.toJSON();
     }
+
+    async delete(examStudentId: string) {
+        await this.examStudentRepository.destroy<ExamStudent>({
+            where: {
+                id: examStudentId
+            }
+        });
+    }
 }
