@@ -1,18 +1,10 @@
-import { Body, Controller, Delete, Get, HttpCode, HttpStatus, Param, ParseIntPipe, ParseUUIDPipe, Patch, Post, UseGuards } from '@nestjs/common';
+import { Body, Controller, Delete, Get, HttpCode, HttpStatus, Param, ParseUUIDPipe, Patch, Post, UseGuards } from '@nestjs/common';
 import { CreateQuestionDto } from './dto/create-question.dto';
 import { QuestionService } from './question.service';
 import { UpdateQuestionDto } from './dto/update-question.dto';
-import { JwtGuard } from 'src/user/guard/jwt.guard';
-import { Roles } from 'src/user/decorator/role.decorator';
-import { Role } from 'src/user/user.entity';
-import { ApiBearerAuth } from '@nestjs/swagger';
-// import { RolesGuard } from 'src/user/guard/roles.guard';
-// import { Roles } from 'src/user/decorator/role.decorator';
-// import { Role } from '@prisma/client';
+import { GlobalQuestionDecorator } from './decorator/appliers.decorator';
 
-@UseGuards(JwtGuard)
-@Roles(Role.TEACHER, Role.ADMIN)
-@ApiBearerAuth()
+@GlobalQuestionDecorator()
 @Controller('question')
 export class QuestionController {
     constructor(private questionService: QuestionService) {}

@@ -1,13 +1,10 @@
 import {
     Table,
     Column,
-    Model,
-    PrimaryKey,
-    AutoIncrement,
     Unique,
     Default,
-    HasMany,
-    BelongsToMany
+    BelongsToMany,
+    ForeignKey
 } from 'sequelize-typescript';
 import { Exam } from 'src/exam/exam.entity';
 import { BaseModel } from 'src/core/common-classes/base.model';
@@ -37,5 +34,6 @@ export class User extends BaseModel {
     hash: string;
   
     @BelongsToMany(() => Exam, () => ExamStudent)
+    @ForeignKey(() => ExamStudent)
     exams: Exam[];
 }

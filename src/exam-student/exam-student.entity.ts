@@ -6,10 +6,10 @@ import { User } from 'src/user/user.entity';
 @Table
 export class ExamStudent extends BaseModel {
   @ForeignKey(() => Exam)
-  @Column({type: DataType.UUID })
+  @Column({ type: DataType.UUID, onDelete: 'CASCADE' })
   examId: string;
 
   @ForeignKey(() => User)
-  @Column({type: DataType.UUID })
+  @Column({ type: DataType.UUID, onDelete: 'CASCADE' })
   userId: string;
 }
