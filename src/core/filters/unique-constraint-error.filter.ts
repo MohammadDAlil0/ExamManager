@@ -8,9 +8,7 @@ export class SequelizeExceptionFilter implements ExceptionFilter {
     const ctx = host.switchToHttp();
     const response = ctx.getResponse<Response>();
 
-    // Customize the error response
     response.status(409).json({
-      statusCode: 409,
       message: 'A record with the same unique constraint already exists.',
       errors: exception.errors.map((err) => err.message),
     });

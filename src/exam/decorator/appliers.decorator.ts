@@ -40,7 +40,7 @@ export function UpdateExamDecorator() {
 export function DeleteExamDecorator() {
     return applyDecorators(
         ApiOperation({ summary: 'Delete Exam' }),
-        ApiResponse({ status: 201, description: 'You will not get anything' }),
+        ApiResponse({ status: 204, description: 'You will not get anything' }),
         HttpCode(HttpStatus.NO_CONTENT),
         Delete(':id')
     );

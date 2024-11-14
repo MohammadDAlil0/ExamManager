@@ -1,4 +1,4 @@
-import { Inject, Injectable, NotFoundException } from '@nestjs/common';
+import { BadRequestException, Inject, Injectable, NotFoundException } from '@nestjs/common';
 import { SignupDto } from './dto/Signup.dto';
 import * as argon from 'argon2';
 import { LoginDto } from './dto/login.dto';
@@ -41,7 +41,7 @@ export class UserService {
     const userMathPassword = await argon.verify(user.hash, dto.password);
 
     if (!userMathPassword) {
-      throw new NotFoundException('Invalid Password');
+      throw new BadRequestException('Invalid Password');
     }
 
     return this.signToken(user.id, user.email);
