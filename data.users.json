@@ -1,44 +1,6 @@
-[
-  {
-    "id": "ddf54d1c-e154-44f0-a7dd-0fb9ad5db7a3",
-    "username": "teacher2",
-    "email": "teacher2@example.com",
-    "role": "TEACHER"
-  },
-  {
-    "id": "c2538901-a865-4ee4-a94a-16dcfcc39ca8",
-    "username": "admin1",
-    "email": "admin1@example.com",
-    "role": "ADMIN"
-  },
-  {
-    "id": "0a92b784-80ac-4e37-9897-e984d7663fb6",
-    "username": "user3",
-    "email": "user3@example.com",
-    "role": "STUDENT"
-  },
-  {
-    "id": "6d5b3ae3-81fd-40b5-8974-f3c19b7709db",
-    "username": "user1",
-    "email": "user1@example.com",
-    "role": "STUDENT"
-  },
-  {
-    "id": "30110e9b-d19a-4fa5-8685-4df7ae812999",
-    "username": "teacher1",
-    "email": "teacher1@example.com",
-    "role": "TEACHER"
-  },
-  {
-    "id": "d186e149-5319-4d70-94d7-b85302c3faa1",
-    "username": "admin2",
-    "email": "admin2@example.com",
-    "role": "ADMIN"
-  },
-  {
-    "id": "36396653-f171-467d-9a57-1eeb0d23cdef",
-    "username": "user2",
-    "email": "user2@example.com",
-    "role": "STUDENT"
-  }
-]
+[{"id":"942bbd26-7d94-4665-9686-a789e47cf08a","createdAt":"2024-11-13T22:10:24.135-08:00","updatedAt":"2024-11-13T22:10:24.142-08:00","username":"user1","email":"user1@example.com","role":"STUDENT","hash":"$argon2id$v=19$m=65536,t=3,p=4$fOvUqfQZeW0jilF9Bqi+RA$mlnn0UeaHnQHWW3CUZS2K0goFMm6+b/G88wWEn+WSZ0"}, 
+ {"id":"58a25fb0-bb12-408b-bb0c-4e5b25011342","createdAt":"2024-11-13T22:10:38.881-08:00","updatedAt":"2024-11-13T22:10:38.882-08:00","username":"user2","email":"user2@example.com","role":"STUDENT","hash":"$argon2id$v=19$m=65536,t=3,p=4$wj1hqwvLHjgws2BEcBvpWQ$nDhBYh3RvIa522DvH4YPQCODYvfCUK3c4J9bXnPvGNU"}, 
+ {"id":"cca20963-0e2d-4874-ba89-bec93ef9a929","createdAt":"2024-11-13T22:10:50.804-08:00","updatedAt":"2024-11-13T22:10:50.805-08:00","username":"user3","email":"user3@example.com","role":"STUDENT","hash":"$argon2id$v=19$m=65536,t=3,p=4$mCGLWHqhxXEOwFgqKrzMaw$WrED7dKIfQwXfbtdTlAgQlJB2dgj45ONVNjWiXYbw8I"}, 
+ {"id":"ffd161ff-12c8-4c3c-966a-90d35daaa38a","createdAt":"2024-11-13T22:11:12.125-08:00","updatedAt":"2024-11-13T22:11:12.126-08:00","username":"admin1","email":"admin1@example.com","role":"ADMIN","hash":"$argon2id$v=19$m=65536,t=3,p=4$/WZm/IcNAIefInTVpvosJg$gTuE5Q1J2rdV5Bk16YRFXCZ2qId0IsCGmfbUzWBnX6E"}, 
+ {"id":"28393d15-afdc-43de-9387-800e96a58576","createdAt":"2024-11-13T22:11:30.044-08:00","updatedAt":"2024-11-13T22:11:30.045-08:00","username":"teacher1","email":"teacher1@example.com","role":"TEACHER","hash":"$argon2id$v=19$m=65536,t=3,p=4$N1jPvDsxbzVpHr1ITYhF/w$yRs5rlqU1Wl2rvTTYWmzkjNSeOq/vn8GBekMldNUTPM"}, 
+ {"id":"01913961-dbdb-442b-bc07-f86fab788ec7","createdAt":"2024-11-13T22:11:36.284-08:00","updatedAt":"2024-11-13T22:11:36.287-08:00","username":"teacher2","email":"teacher2@example.com","role":"TEACHER","hash":"$argon2id$v=19$m=65536,t=3,p=4$PZc6zoZWEUSBZvna4Qf3RA$VjbXHtIjZ3qFqR2Ge6Sqk1bPXzHBFT01keZuJxKtw0k"}]

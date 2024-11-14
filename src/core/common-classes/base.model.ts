@@ -10,7 +10,7 @@ export class BaseModel extends Model {
 
     @CreatedAt
     @Default(DataType.NOW)
-    @Column
+    @Column({field: 'createdAt'})
     createdAt: Date;
   
     @UpdatedAt

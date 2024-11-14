@@ -40,6 +40,10 @@ async function deleteRowsFromTable(tableName) {
   }
 }
 
+/*
+Select json_agg(public."Users".*) from public."Users";
+*/
+
 // Function to insert data into a specific table by reading a JSON file
 async function insertData(tableName, jsonFilePath) {
   const client = new Client(config);
@@ -63,7 +67,8 @@ async function insertData(tableName, jsonFilePath) {
 
   // Generate the SQL query for bulk insert
   try {
-    const columns = Object.keys(data[0]).join(", ");
+    const columns = Object.keys(data[0]).map((key) => `"${key}"`)
+    .join(", ");;
     const values = data
       .map((row) => {
         return `(${Object.values(row)
@@ -101,7 +106,7 @@ const jsonFilePath = process.argv[4];
         console.error("Please specify a table name, e.g., node database-utils.js dropTable users");
         process.exit(1);
       }
-      await dropTable(tableName);
+      await deleteRowsFromTable(tableName);
       break;
     case "insertData":
       if (!tableName || !jsonFilePath) {
