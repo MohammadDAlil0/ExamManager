@@ -1,5 +1,5 @@
 import { applyDecorators, Delete, Get, HttpCode, HttpStatus, Post, Put, UseGuards } from '@nestjs/common';
-import { ApiBearerAuth, ApiOperation, ApiResponse } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiOperation, ApiQuery, ApiResponse } from '@nestjs/swagger';
 import { JwtGuard } from '../guard/jwt.guard';
 import { Roles } from './role.decorator';
 import { RolesGuard } from '../guard/roles.guard';
@@ -21,6 +21,11 @@ export function LoginDecorators() {
     );
 }
 
+export enum UserFilter {
+    USERNAME = 'USERNAME',
+    EMAIL = 'EMAIL',
+    ROLE = 'ROLE',
+}
 
 export function GetAllUsersDecorators() {
     return applyDecorators(

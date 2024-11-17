@@ -8,6 +8,7 @@ import { ChangeRoleDto } from './dto/changeRole.dto';
 import { USER_REPOSITORY } from 'src/core/constants/constants';
 import { User } from './user.entity';
 import { Exam } from 'src/exam/exam.entity';
+import { QueryParamsDto } from './dto/query-params.dto';
 
 @Injectable({})
 export class UserService {
@@ -61,11 +62,14 @@ export class UserService {
     }
   }
 
-  async getAllUsers(): Promise<any[]> {
+  async getAllUsers(query: QueryParamsDto): Promise<any[]> {
     const users = await this.userRepository.findAll({
       include: {
-        model: Exam
-      }
+        model: Exam,
+      },
+      attributes: query.fields || undefined,
+      offset: query.limit * (query.page - 1) || undefined,
+      limit: query.limit || undefined,
     });
     return users.map((obj) => {
       const user = obj.toJSON();
@@ -83,7 +87,11 @@ export class UserService {
       }
     );
 
-    const user = affectedRows[0]; // Access the updated user if needed
+    if (!numberOfAffectedRows) {
+      throw new NotFoundException('Invalid user ID');
+    }
+
+    const user = affectedRows[0];
     delete user.hash;
     return user;
   }

@@ -1,9 +1,10 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, Put, ParseIntPipe, UseGuards, HttpCode, HttpStatus, ParseUUIDPipe } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, Put, ParseIntPipe, UseGuards, HttpCode, HttpStatus, ParseUUIDPipe, Query } from '@nestjs/common';
 import { UserService } from './user.service';
 import { SignupDto } from './dto/Signup.dto';
 import { LoginDto } from './dto/login.dto';
 import { ChangeRoleDto } from './dto/changeRole.dto';
 import { ChangeRoleDecorator, DeleteUserDecorators, GetAllUsersDecorators, LoginDecorators, SignupDecorators } from './decorator/appliers.decorator';
+import { QueryParamsDto } from './dto/query-params.dto';
 
 @Controller('user')
 export class UserController {
@@ -20,8 +21,8 @@ export class UserController {
   }
 
   @GetAllUsersDecorators()
-  getAllUsers() {
-    return this.userService.getAllUsers();
+  getAllUsers(@Query() query: QueryParamsDto) {
+    return this.userService.getAllUsers(query);
   }
 
   @ChangeRoleDecorator()
