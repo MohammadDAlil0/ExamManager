@@ -8,7 +8,8 @@ import { ChangeRoleDto } from './dto/changeRole.dto';
 import { USER_REPOSITORY } from 'src/core/constants/constants';
 import { User } from './user.entity';
 import { Exam } from 'src/exam/exam.entity';
-import { QueryParamsDto } from './dto/query-params.dto';
+import { QueryParamsDto } from '../core/global-dto/query-params.dto';
+import { Op } from 'sequelize';
 
 @Injectable({})
 export class UserService {
@@ -63,13 +64,34 @@ export class UserService {
   }
 
   async getAllUsers(query: QueryParamsDto): Promise<any[]> {
+    if (query.fields) {
+      query.fields = query.fields.filter((value) => value === 'id' || value === 'username' || value === 'email' || value === 'role');
+    }
+
+    const include = query.populate
+            ? 
+            [
+                {
+                    model: Exam,
+                }
+            ]
+            : undefined;
+
+    const where: any = {};
+    if (query.search) {
+      where[Op.or] = [
+        { username: { [Op.like]: `%${query.search}%` } },
+        { email: { [Op.like]: `%${query.search}%` } },
+        { role: { [Op.like]: `%${query.search}%` } },
+      ];
+    }
+
     const users = await this.userRepository.findAll({
-      include: {
-        model: Exam,
-      },
+      include,
       attributes: query.fields || undefined,
       offset: query.limit * (query.page - 1) || undefined,
       limit: query.limit || undefined,
+      where
     });
     return users.map((obj) => {
       const user = obj.toJSON();

@@ -4,7 +4,7 @@ import { SignupDto } from './dto/Signup.dto';
 import { LoginDto } from './dto/login.dto';
 import { ChangeRoleDto } from './dto/changeRole.dto';
 import { ChangeRoleDecorator, DeleteUserDecorators, GetAllUsersDecorators, LoginDecorators, SignupDecorators } from './decorator/appliers.decorator';
-import { QueryParamsDto } from './dto/query-params.dto';
+import { QueryParamsDto } from '../core/global-dto/query-params.dto';
 
 @Controller('user')
 export class UserController {
