@@ -1,9 +1,10 @@
-import { applyDecorators, Delete, Get, HttpCode, HttpStatus, Post, Put, UseGuards } from '@nestjs/common';
+import { applyDecorators, Delete, Get, HttpCode, HttpStatus, Post, Put, UseGuards, UseInterceptors } from '@nestjs/common';
 import { ApiBearerAuth, ApiOperation, ApiQuery, ApiResponse } from '@nestjs/swagger';
 import { JwtGuard } from '../guard/jwt.guard';
 import { Roles } from './role.decorator';
 import { RolesGuard } from '../guard/roles.guard';
 import { Role } from '../user.entity';
+import { CacheInterceptor } from '@nestjs/cache-manager';
 
 export function SignupDecorators() {
   return applyDecorators(
@@ -29,6 +30,7 @@ export enum UserFilter {
 
 export function GetAllUsersDecorators() {
     return applyDecorators(
+        UseInterceptors(CacheInterceptor),
         ApiOperation({ summary: 'Get All Users' }),
         ApiResponse({ status: 200, description: 'You will get a list of users' }),
         ApiBearerAuth(),
