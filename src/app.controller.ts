@@ -10,9 +10,9 @@ export class AppController {
     private readonly appService: AppService
   ) {}
 
-  @Version('1')
+  // @Version('1')
+  // @UseInterceptors(CacheInterceptor)
   @Get()
-  @UseInterceptors(CacheInterceptor)
   getHello(): any {
     return this.appService.getHello();
   }

@@ -20,6 +20,7 @@ export const databaseProviders = [
         username: configService.getOrThrow('DATA_BASE_USERNAME'),
         password: configService.getOrThrow('DATA_BASE_PASSWORD'),
         database: configService.getOrThrow('DATA_BASE_NAME'),
+        logging: false
       });
       sequelize.addModels([User, Exam, ExamQuestion, ExamStudent, Question]);
       await sequelize.sync();
