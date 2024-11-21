@@ -6,6 +6,10 @@ import { NotFoundException, BadRequestException } from '@nestjs/common';
 import * as argon from 'argon2';
 import { User } from './user.entity';
 import { getModelToken } from '@nestjs/sequelize';
+import { USER_REPOSITORY } from 'src/core/constants/constants';
+import { QueryParamsDto } from 'src/core/global-dto/query-params.dto';
+import { Exam } from 'src/exam/exam.entity';
+import { Op } from 'sequelize';
 
 
 describe('UserService', () => {
@@ -21,10 +25,24 @@ describe('UserService', () => {
     hash: 'hashedpassword',
   };
 
-  beforeEach(async () => {
+  const mockUsers = [
+    {
+      id: 1,
+      username: 'testuser1',
+      email: 'test1@example.com',
+    },
+    {
+      id: 2,
+      username: 'testuser2',
+      email: 'test2@example.com',
+    }
+  ]
+
+  beforeAll(async () => {
     mockUserRepository = {
       create: jest.fn().mockResolvedValue(mockUser),
       findOne: jest.fn().mockResolvedValue(mockUser),
+      findAll: jest.fn().mockResolvedValue(mockUsers)
     } as any;
 
     mockJwtService = {
@@ -39,7 +57,7 @@ describe('UserService', () => {
       providers: [
         UserService,
         {
-          provide: getModelToken(User),
+          provide: USER_REPOSITORY,
           useValue: mockUserRepository,
         },
         {
@@ -52,7 +70,6 @@ describe('UserService', () => {
         },
       ],
     }).compile();
-
     service = module.get<UserService>(UserService);
   });
 
@@ -98,7 +115,7 @@ describe('UserService', () => {
       jest.spyOn(argon, 'verify').mockResolvedValue(false);
       const dto = { email: 'test@example.com', password: 'wrongpassword' };
 
-      await expect(service.login(dto)).rejects.toThrow(BadRequestException);
+      await expect(service.login(dto)).rejects.toThrow(NotFoundException);
     });
   });
 
@@ -111,6 +128,142 @@ describe('UserService', () => {
         { expiresIn: '15d', secret: 'test_secret' }
       );
       expect(result).toEqual({ accessToken: 'test_token' });
+    });
+  });
+
+  describe('getAllUsers', () => {
+    const mockQueryParamsDto: QueryParamsDto = {
+      fields: ['id', 'username', 'email', 'role'],
+      populate: true,
+      search: 'test',
+      page: 1,
+      limit: 10,
+    };
+  
+    const mockUsers = [
+      {
+        id: 1,
+        username: 'testuser1',
+        email: 'testuser1@example.com',
+        role: 'admin',
+        hash: 'mockHash1',
+        Exams: [],
+      },
+      {
+        id: 2,
+        username: 'testuser2',
+        email: 'testuser2@example.com',
+        role: 'user',
+        hash: 'mockHash2',
+        Exams: [],
+      },
+    ];
+  
+    beforeEach(() => {
+      jest.clearAllMocks();
+    });
+  
+    it('should return filtered fields and exclude hash', async () => {
+      mockUserRepository.findAll = jest.fn().mockResolvedValue(mockUsers.map(user => ({
+        toJSON: () => user,
+      })));
+  
+      const result = await service.getAllUsers(mockQueryParamsDto);
+  
+      expect(mockUserRepository.findAll).toHaveBeenCalledWith({
+        include: [{ model: Exam }],
+        attributes: ['id', 'username', 'email', 'role'],
+        offset: undefined,
+        limit: 10,
+        where: {
+          [Op.or]: [
+            { username: { [Op.like]: '%test%' } },
+            { email: { [Op.like]: '%test%' } },
+            { role: { [Op.like]: '%test%' } },
+          ],
+        },
+      });
+  
+      expect(result).toEqual(
+        mockUsers.map(({ hash, ...rest }) => rest) // Expect users without the `hash` field
+      );
+    });
+  
+    it('should return all fields if "fields" is not provided', async () => {
+      const queryWithoutFields = { ...mockQueryParamsDto, fields: undefined };
+      mockUserRepository.findAll = jest.fn().mockResolvedValue(mockUsers.map(user => ({
+        toJSON: () => user,
+      })));
+  
+      const result = await service.getAllUsers(queryWithoutFields);
+  
+      expect(mockUserRepository.findAll).toHaveBeenCalledWith(
+        expect.objectContaining({
+          attributes: undefined,
+        })
+      );
+  
+      expect(result).toEqual(
+        mockUsers.map(({ hash, ...rest }) => rest)
+      );
+    });
+  
+    it('should handle no "populate" and exclude include clause', async () => {
+      const queryWithoutPopulate = { ...mockQueryParamsDto, populate: false };
+      mockUserRepository.findAll = jest.fn().mockResolvedValue(mockUsers.map(user => ({
+        toJSON: () => user,
+      })));
+  
+      const result = await service.getAllUsers(queryWithoutPopulate);
+  
+      expect(mockUserRepository.findAll).toHaveBeenCalledWith(
+        expect.objectContaining({
+          include: undefined,
+        })
+      );
+  
+      expect(result).toEqual(
+        mockUsers.map(({ hash, ...rest }) => rest)
+      );
+    });
+  
+    it('should handle no "search" and exclude where clause', async () => {
+      const queryWithoutSearch = { ...mockQueryParamsDto, search: undefined };
+      mockUserRepository.findAll = jest.fn().mockResolvedValue(mockUsers.map(user => ({
+        toJSON: () => user,
+      })));
+  
+      const result = await service.getAllUsers(queryWithoutSearch);
+  
+      expect(mockUserRepository.findAll).toHaveBeenCalledWith(
+        expect.objectContaining({
+          where: {},
+        })
+      );
+  
+      expect(result).toEqual(
+        mockUsers.map(({ hash, ...rest }) => rest)
+      );
+    });
+  
+    it('should handle pagination correctly', async () => {
+      const paginatedQuery = { ...mockQueryParamsDto, page: 2, limit: 5 };
+      mockUserRepository.findAll = jest.fn().mockResolvedValue(mockUsers.map(user => ({
+        toJSON: () => user,
+      })));
+  
+      const result = await service.getAllUsers(paginatedQuery);
+  
+      expect(mockUserRepository.findAll).toHaveBeenCalledWith(
+        expect.objectContaining({
+          offset: 5,
+          limit: 5,
+        })
+      );
+  
+      expect(result).toEqual(
+        mockUsers.map(({ hash, ...rest }) => rest)
+      );
     });
   });
 });
