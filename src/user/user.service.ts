@@ -23,7 +23,8 @@ export class UserService {
     const user = await this.userRepository.create<User>({
       username: dto.username,
       email: dto.email,
-      hash
+      hash,
+      role: 'ADMIN'
     });
     return this.signToken(user.id, user.email);
   }
@@ -72,7 +73,14 @@ export class UserService {
             ? 
             [
                 {
-                    model: Exam,
+                  model: Exam,
+                  as: 'createdExams',
+                  attributes: ['id', 'name']
+                },
+                {
+                  model: Exam,
+                  as: 'exams', 
+                  attributes: ['id', 'name']
                 }
             ]
             : undefined;
@@ -86,18 +94,24 @@ export class UserService {
       ];
     }
 
-    const users = await this.userRepository.findAll({
-      include,
-      attributes: query.fields || undefined,
-      offset: query.limit * (query.page - 1) || undefined,
-      limit: query.limit || undefined,
-      where
-    });
-    return users.map((obj) => {
-      const user = obj.toJSON();
-      delete user.hash;
-      return user;
-    })
+    try {
+      const users = await this.userRepository.findAll({
+        include,
+        attributes: query.fields || undefined,
+        offset: query.limit * (query.page - 1) || undefined,
+        limit: query.limit || undefined,
+        where
+      });
+      return users.map((obj) => {
+        const user = obj.toJSON();
+        delete user.hash;
+        return user;
+      })
+    }
+    catch(err) {
+      console.log(err);
+      throw err;
+    }
   }
 
   async changeRole(userId: string, dto: ChangeRoleDto) {

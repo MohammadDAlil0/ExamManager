@@ -34,7 +34,8 @@ export function GetAllUsersDecorators() {
         ApiOperation({ summary: 'Get All Users' }),
         ApiResponse({ status: 200, description: 'You will get a list of users' }),
         ApiBearerAuth(),
-        UseGuards(JwtGuard),
+        UseGuards(JwtGuard, RolesGuard),
+        Roles(Role.ADMIN),
         Get()
     );
 }

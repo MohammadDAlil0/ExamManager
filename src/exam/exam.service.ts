@@ -12,14 +12,15 @@ import { Op } from 'sequelize';
 export class ExamService {
     constructor(@Inject(EXAM_REPOSITORY) private examRepository: typeof Exam) {}
 
-    async createExam(dto: CreateExamDto) {
+    async createExam(dto: CreateExamDto, user: User) {
         const exam = await this.examRepository.create<Exam>({
-            ...dto
+            ...dto,
+            createdBy: user.id
         });
         return exam.toJSON();
     }
 
-    async getAllExams(query: QueryParamsDto) {
+    async getAllExams(query: QueryParamsDto, user: User) {
         if (query.fields) {
             query.fields = query.fields.filter((value) => ['id', 'name', 'duration'].includes(value));
         }
@@ -39,10 +40,20 @@ export class ExamService {
                 },
                 {
                     model: User,
-                    attributes: ['id', 'username', 'email', 'role'],
+                    as: 'students',
+                    attributes: ['id', 'username'],
                 },
+                {
+                    model: User,
+                    as: 'creator',
+                    attributes: ['id', 'username'],
+                }
             ]
             : undefined;
+        if (user.role === 'TEACHER' ) {
+            if (include)include.pop();
+            where['createdBy'] = user.id
+        }
 
         const exams = await this.examRepository.findAll<Exam>({
             include,
@@ -54,25 +65,32 @@ export class ExamService {
         return exams;
     }
 
-    async updateExam(examId: string, dto: UpdateExamDto) {
+    async updateExam(examId: string, dto: UpdateExamDto, user: User) {
         const [numberOfAffectedRows, affectedRows] = await this.examRepository.update<Exam>(
             {
                 ...dto
             }, 
             {
-                where: {id: examId},
+                where: {id: examId, createdBy: user.id},
                 returning: true
             }
         );
+        if (numberOfAffectedRows === 0) {
+            throw new NotFoundException('There is no exam belongs to that user');
+        }
         return affectedRows[0];
     }
 
-    async deleteExam(examId: string) {
-        await this.examRepository.destroy<Exam>({
+    async deleteExam(examId: string, user: User) {
+        const numberOfAffectedRows = await this.examRepository.destroy<Exam>({
             where: {
-                id: examId
+                id: examId, 
+                createdBy: user.id
             }
         });
+        if (numberOfAffectedRows === 0) {
+            throw new NotFoundException('There is no exam belongs to that user');
+        }
     }
 }
 

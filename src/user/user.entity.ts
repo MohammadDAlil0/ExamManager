@@ -4,7 +4,8 @@ import {
     Unique,
     Default,
     BelongsToMany,
-    ForeignKey
+    ForeignKey,
+    HasMany
 } from 'sequelize-typescript';
 import { Exam } from 'src/exam/exam.entity';
 import { BaseModel } from 'src/core/common-classes/base.model';
@@ -36,4 +37,7 @@ export class User extends BaseModel {
     @BelongsToMany(() => Exam, () => ExamStudent)
     @ForeignKey(() => ExamStudent)
     exams: Exam[];
+
+    @HasMany(() => Exam, {as: 'createdExams'})
+    createdExams: Exam[];
 }
