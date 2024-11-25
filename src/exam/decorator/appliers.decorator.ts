@@ -29,6 +29,15 @@ export function GetAllExamsDecorator() {
     );
 }
 
+export function GetExam() {
+    return applyDecorators(
+        ApiOperation({ summary: 'Get the exam with its question if its allowed'}),
+        ApiResponse({ status: 200, description: 'You will get an exam with its questions, I will get the students rolled in the exam of you are a Teacher or an Admin' }),
+        Roles(Role.STUDENT, Role.TEACHER),
+        Get(':id')
+    )
+}
+
 export function UpdateExamDecorator() {
     return applyDecorators(
         ApiOperation({ summary: 'Update Exam' }),

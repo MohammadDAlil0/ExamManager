@@ -25,7 +25,7 @@ export class UserService {
       username: dto.username,
       email: dto.email,
       hash,
-      role: 'ADMIN'
+      role: dto.role // For Testing 
     });
     return this.signToken(user.id, user.email);
   }

@@ -2,7 +2,7 @@ import { Body, Controller, Param, ParseUUIDPipe, Query } from '@nestjs/common';
 import { CreateExamDto } from './dto/create-exam.dto';
 import { ExamService } from './exam.service';
 import { UpdateExamDto } from './dto/update-exam.dto';
-import { CreateExamDecorator, DeleteExamDecorator, GetAllExamsDecorator, GlobalExamDecorator, UpdateExamDecorator } from './decorator/appliers.decorator';
+import { CreateExamDecorator, DeleteExamDecorator, GetAllExamsDecorator, GetExam, GlobalExamDecorator, UpdateExamDecorator } from './decorator/appliers.decorator';
 import { QueryParamsDto } from 'src/core/global-dto/query-params.dto';
 import { GetUser } from 'src/user/decorator/get-user.decorator';
 import { User } from 'src/user/user.entity';
@@ -20,6 +20,11 @@ export class ExamController {
     @GetAllExamsDecorator()
     getAllExams(@Query() query: QueryParamsDto, @GetUser() user: User) {
         return this.examService.getAllExams(query, user);
+    }
+
+    @GetExam()
+    getExam(@Param('id', ParseUUIDPipe) examId: string, @GetUser() user: User) {
+        return this.examService.getExam(examId, user);
     }
 
     @UpdateExamDecorator()

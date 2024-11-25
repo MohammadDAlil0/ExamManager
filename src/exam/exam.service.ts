@@ -1,4 +1,4 @@
-import { Inject, Injectable, NotFoundException } from '@nestjs/common';
+import { Global, Inject, Injectable, MethodNotAllowedException, NotFoundException } from '@nestjs/common';
 import { CreateExamDto } from './dto/create-exam.dto';
 import { UpdateExamDto } from './dto/update-exam.dto';
 import { EXAM_REPOSITORY } from 'src/core/constants/constants';
@@ -36,6 +36,36 @@ export class ExamService {
         
         const exams = await this.examRepository.findAll<Exam>(queryFilter);
         return exams;
+    }
+
+    async getExam(examId: string, user: User) {
+        const include: any = [
+            { model: Question },
+        ]
+        const where: any = {
+            id: examId,
+        }
+        if (user.role === 'TEACHER') {
+            include.push({ model: User, as: 'students', attributes: ['id', 'username'] });
+            where['createdBy'] = user.id;
+        }
+        else {
+            include.push({
+                model: User,
+                as: 'students',
+                where: { id: user.id }, // Filter students by user ID
+            });
+            where['date'] = { [Op.lt]: Date.now() };
+        }
+
+        const exam = this.examRepository.findOne<Exam>({
+            include,
+            where
+        });
+        if (!exam) {
+            throw new MethodNotAllowedException('Access is not allowed')
+        }
+        return exam;
     }
 
     async updateExam(examId: string, dto: UpdateExamDto, user: User) {

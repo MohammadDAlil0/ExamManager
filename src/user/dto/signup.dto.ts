@@ -39,8 +39,11 @@ export class SignupDto {
   })
   @IsString()
   @IsNotEmpty()
-  @Match('password', { message: 'Passwords do not match' })  // Custom validation
+  @Match('password', { message: 'Passwords do not match' })
   confirmPassword: string;
+
+
+  role: string; // For Testing 
 }
 
 
