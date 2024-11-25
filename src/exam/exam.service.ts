@@ -64,6 +64,9 @@ export class ExamService {
         if (numberOfAffectedRows === 0) {
             throw new NotFoundException('There is no exam belongs to that user');
         }
+        if (numberOfAffectedRows === 0) {
+            throw new NotFoundException('There is no exam belongs to that user');
+        }
     }
 }
 
