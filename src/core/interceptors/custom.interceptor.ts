@@ -24,7 +24,6 @@ export class CustomResponseInterceptorDevelopment implements NestInterceptor {
               if (err.response && err.response.message) {
                 messages = err.response.message;
               }
-              console.log(err, err.errors, err.constructor.name);
               if (err instanceof UniqueConstraintError) {
                 messages = err.errors.map(e => e.message);
               }

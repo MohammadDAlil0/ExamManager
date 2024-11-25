@@ -10,6 +10,7 @@ import { User } from './user.entity';
 import { Exam } from 'src/exam/exam.entity';
 import { QueryParamsDto } from '../core/global-dto/query-params.dto';
 import { Op } from 'sequelize';
+import { GlobalQueryFilter } from 'src/core/utils/global-filter';
 
 @Injectable({})
 export class UserService {
@@ -23,7 +24,8 @@ export class UserService {
     const user = await this.userRepository.create<User>({
       username: dto.username,
       email: dto.email,
-      hash
+      hash,
+      role: 'ADMIN'
     });
     return this.signToken(user.id, user.email);
   }
@@ -64,40 +66,28 @@ export class UserService {
   }
 
   async getAllUsers(query: QueryParamsDto): Promise<any[]> {
-    if (query.fields) {
-      query.fields = query.fields.filter((value) => value === 'id' || value === 'username' || value === 'email' || value === 'role');
+    const queryFilter = new GlobalQueryFilter<Exam>(query)
+    .setFields(['id', 'username', 'email', 'role'])
+    .setSearch(['username', 'email', 'role'])
+    .setPagination()
+    .setInclude([
+        { model: Exam, as: 'createdExams', attributes: ['id', 'name'] },
+        { model: Exam, as: 'exams', attributes: ['id', 'name'] }
+    ])
+    .getOptions()
+
+    try {
+      const users = await this.userRepository.findAll(queryFilter);
+      return users.map((obj) => {
+        const user = obj.toJSON();
+        delete user.hash;
+        return user;
+      })
     }
-
-    const include = query.populate
-            ? 
-            [
-                {
-                    model: Exam,
-                }
-            ]
-            : undefined;
-
-    const where: any = {};
-    if (query.search) {
-      where[Op.or] = [
-        { username: { [Op.like]: `%${query.search}%` } },
-        { email: { [Op.like]: `%${query.search}%` } },
-        { role: { [Op.like]: `%${query.search}%` } },
-      ];
+    catch(err) {
+      console.log(err);
+      throw err;
     }
-
-    const users = await this.userRepository.findAll({
-      include,
-      attributes: query.fields || undefined,
-      offset: query.limit * (query.page - 1) || undefined,
-      limit: query.limit || undefined,
-      where
-    });
-    return users.map((obj) => {
-      const user = obj.toJSON();
-      delete user.hash;
-      return user;
-    })
   }
 
   async changeRole(userId: string, dto: ChangeRoleDto) {

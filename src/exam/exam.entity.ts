@@ -3,6 +3,8 @@ import {
     Column,
     DataType,
     BelongsToMany,
+    BelongsTo,
+    ForeignKey,
 } from 'sequelize-typescript';
 import { BaseModel } from 'src/core/common-classes/base.model';
 import { Question } from 'src/question/question.entity';
@@ -20,11 +22,18 @@ export class Exam extends BaseModel {
   
     @Column(DataType.DATE)
     date: Date;
-  
+
     @BelongsToMany(() => User, () => ExamStudent)
     students: User[];
   
     @BelongsToMany(() => Question, () => ExamQuestion)
     questions: Question[];
+
+    @ForeignKey(() => User)
+    @Column(DataType.UUID)
+    createdBy: string;
+
+    @BelongsTo(() => User, {as: 'creator'})
+    creator: User;
 }
   

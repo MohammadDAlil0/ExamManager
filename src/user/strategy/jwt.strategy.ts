@@ -1,4 +1,4 @@
-import { Inject, Injectable } from "@nestjs/common";
+import { Inject, Injectable, NotFoundException } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
 import { PassportStrategy } from "@nestjs/passport";
 import { ExtractJwt, Strategy } from "passport-jwt";
@@ -25,6 +25,9 @@ export class JWTStrategy extends PassportStrategy(Strategy, 'jwt') {
                 id: payload.sub
             }
         });
+        if (!user) {
+            throw new NotFoundException('User not found')
+        }
         delete user.hash;
         return user;
     }
